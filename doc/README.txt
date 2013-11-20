@@ -13,6 +13,11 @@ http://tokyohackerspace.org/en/blog/tokyo-hackerspacerdtn-geiger-shield-dev-hist
 --------------------      ----------        ~~~~~~~~~~~~
 | FREAKDUINO-CHIBI | ==== | NetRAD | ----  0   SBM-20   0
 --------------------      ----------        ~~~~~~~~~~~~
+         ||
+--------------------
+| ADAFRUIT SSD1306  |
+|      (V1.2.0)     |
+--------------------
 
 The FREAKDUINO-CHIBI (MCU board) and NetRAD (shield) are open hardware
 licensed under Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0):
@@ -21,6 +26,9 @@ licensed under Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0):
 
 As of October 2011, we are using FREAKDUINO-CHIBI-v1.1 (ATmega328P @ 8MHz),
 NETRAD-v1.0 boards and SBM-20 GM tubes.
+
+As from V1.20 a ADAFRUIT SSD1306 display can be used.
+	http://www.adafruit.com/products/326
 
 FREAKDUINO-CHIBI
 	http://www.freaklabsstore.com/pub/FREAKDUINO-CHIBI%20v1.1%20Datasheet.pdf
