@@ -186,7 +186,7 @@ void setup() {
 	// numbers 0 (on digital pin 2) and 1 (on digital pin 3)
 	attachInterrupt(0, onPulse, interruptMode);                                // comment out to disable the GM Tube
 //	attachInterrupt(1, onPulse, interruptMode);                                // comment out to disable the GM Tube
-	updateIntervalInMillis = updateIntervalInMinutes * 60000;                  // update time in ms
+	updateIntervalInMillis = updateIntervalInMinutes * 300000;                  // update time in ms
 
 	unsigned long now = millis();
 	nextExecuteMillis = now + updateIntervalInMillis;
@@ -364,7 +364,7 @@ void loop() {
 		return;
 	}
 
-	float CPM = (float)counts_per_sample / (float)updateIntervalInMinutes;
+	float CPM = (float)counts_per_sample / (float)updateIntervalInMinutes/5;
 	counts_per_sample = 0;
 
         SendDataToServer(CPM);
