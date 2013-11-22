@@ -8,6 +8,7 @@ Connection:
  based on NetRad 1.1.2
 
  created 18 Nov 2013
+ updated 22 Nov 2013
  by Allan Lind: alind@joho.com
  Code from Lionel and Kalin of Safecast
  This code is in the public domain.
@@ -354,7 +355,16 @@ void loop() {
 	// Add any geiger event handling code here
 	if (eventFlag)
 	{
-		eventFlag = 0;					// clear the event flag for later use
+		eventFlag = 0;				// clear the event flag for later use
+//              Serial.print(".");                     // prints a dot accross the console for each click
+//		tone(pinSpkr, 2000);			// beep the piezo speaker
+
+		digitalWrite(pinLED, HIGH);		// flash the LED
+		delay(7);
+		digitalWrite(pinLED, LOW);
+
+//		noTone(pinSpkr);			// turn off the speaker
+
 	}
 
 	// check if its time to update server.
