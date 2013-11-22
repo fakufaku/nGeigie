@@ -57,14 +57,6 @@ static char VERSION[] = "1.2.0";
 
 static char json_buf[LINE_SZ];
 
-int freeRAM ()
-{
-	extern int __heap_start, *__brkval;
-	int v;
-	return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
-}
-
-
 // Sampling interval (e.g. 60,000ms = 1min)
 unsigned long updateIntervalInMillis = 0;
 
@@ -153,8 +145,6 @@ void setup() {
 			Serial.println("Sensor Model: LND 7318");
 			Serial.println("Conversion factor: 344 cpm = 1 uSv/Hr");
 			conversionCoefficient = 0.0029;
-	                Serial.print(freeRAM());
-	                Serial.println(" b free");
 
 	#ifdef  USE_DISPLAY
 							display.setTextSize(1);
@@ -194,8 +184,8 @@ void setup() {
 	// Note:
 	// Most Arduino boards have two external interrupts:
 	// numbers 0 (on digital pin 2) and 1 (on digital pin 3)
-//	attachInterrupt(0, onPulse, interruptMode);                                // comment out to disable the GM Tube
-	attachInterrupt(1, onPulse, interruptMode);                                // comment out to disable the GM Tube
+	attachInterrupt(0, onPulse, interruptMode);                                // comment out to disable the GM Tube
+//	attachInterrupt(1, onPulse, interruptMode);                                // comment out to disable the GM Tube
 	updateIntervalInMillis = updateIntervalInMinutes * 60000;                  // update time in ms
 
 	unsigned long now = millis();

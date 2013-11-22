@@ -5,11 +5,11 @@
 #define MAX_FAILED_CONNS 3
 
 
-// Your API key (a public secure key is recommended)
-const char *apiKey = "z5H2f3pvUGf1zp81Gcmq";
-const char *lat = "35.6348" ;
-const char *lon = "139.7031" ;
-const char *ID = "38" ;
+// Your API key (a public secure key is recommended) IWAKI HAWK 002
+const char *apiKey = "buXEwRaCpBMer8jTZ9mp";
+const char *lat = "37.0105" ;
+const char *lon = "140.9253" ;
+const char *ID = "41" ;
 
 // REPLACE WITH A PROPER MAC ADDRESS
 byte macAddress[] = { 0xDA, 0xD1, 0xBE, 0x60, 0x0D, 0x00 };
@@ -64,3 +64,4 @@ enum states
 const int interruptMode = RISING;
 
 // vim: set tabstop=4 shiftwidth=4 syntax=c foldmethod=marker :
+
