@@ -1,7 +1,8 @@
 A repository to host firmware/software related to the DIY Geiger-Mueller
 counter units.
 
-V1.1.3 is with added OLED display
+
+V1.1.3 is with added OLED display.
 V1.2.0 is with LCD display and prepared for working with SD card.
 
 http://www.tokyohackerspace.org/en/event/diy-geiger-mueller-counter-workshop-20-2011-08-08
