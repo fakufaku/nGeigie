@@ -6,20 +6,19 @@
 
 
 // Your API key (a public secure key is recommended) IWAKI HAWK 002
-const char *apiKey = "buXEwRaCpBMer8jTZ9mp";
-const char *lat = "37.0105" ;
-const char *lon = "140.9253" ;
-const char *ID = "41" ;
+const char *apiKey = "q1LKu7RQ8s5pmyxunnDW";
+const char *lat = "34.2857" ;
+const char *lon = "136.9481" ;
+const char *ID = "42" ;
 
 // REPLACE WITH A PROPER MAC ADDRESS
-byte macAddress[] = { 0xDA, 0xD1, 0xBE, 0x60, 0x0D, 0x00 };
-
+byte macAddress[] = { 0x90, 0xA2, 0xDA, 0x0E, 0xE0, 0x5C };
 
 // Enter an IP address for your controller below.
 // The IP address will be dependent on your local network:
 EthernetClient client;
 IPAddress localIP (192, 168, 100, 40);		// fallback local IP address if no DHCP
-IPAddress serverIP(176, 56, 236, 75 );
+IPAddress serverIP(176, 56, 236, 75 );		// Lionel's proxy server with timestamp
 
 
 // This is specific to the Uno Ethernet board

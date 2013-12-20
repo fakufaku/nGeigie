@@ -9,13 +9,12 @@ Connection:
 
  created 18 Nov 2013
  updated 22 Nov 2013
+ updated 10 Dec 2013 added LCD display
  by Allan Lind: alind@joho.com
  Code from Lionel and Kalin of Safecast
  This code is in the public domain.
  */
  
-#define USE_DISPLAY 1     // comment this line out if not using the display
-
 #include <SPI.h>         // needed for Arduino versions later than 0018
 #include <Ethernet.h>
 #include <util.h>
@@ -25,31 +24,39 @@ Connection:
 #include <Wire.h>
 #include "board_specific_settings.h"
 
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
-#define OLED_CS 4
-#define OLED_MOSI 5
-#define OLED_CLK 6
-#define OLED_RESET 7
-#define OLED_DC 8
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <LiquidCrystal.h>
+
+#define DIM_TIME 60000
+#define DIM_LEN 1000
 #define NUMFLAKES 10
 #define XPOS 0
 #define YPOS 1
 #define DELTAY 2
-#define LOGO16_GLCD_HEIGHT 16 
-#define LOGO16_GLCD_WIDTH  16 
 #define SEPARATOR	"--------------------"
 #define DEBUG		0
 
 
 
-static char VERSION[] = "1.2.0";
+static char VERSION[] = "V2.0.0";
 
 #define _SS_MAX_RX_BUFF 128 // RX buffer size
 
-#ifdef  USE_DISPLAY
-        Adafruit_SSD1306 display(OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
-#endif
+// initialize the library with the numbers of the interface pins
+LiquidCrystal lcd(2,3,8,5,6,7);
+// pin layout
+int backlightPin = 9; 
+//int buzzerPin = 8;  //used instead of pin 4 for LCD pin4 is SD card.
+int pinLightSensor = 0;
+int pinTiltSensor = 15;
+
+// screen variables
+float brightness;
+unsigned long dimmerTimer;
+int dimmed;
+int tilt_pre;
 
 // this holds the info for the device
 // static device_t dev;
@@ -89,9 +96,10 @@ static devctrl_t ctrl;
 
 static FILE uartout = {0};		// needed for printf
 
-
-
-
+void setBrightness(float c)
+{
+  analogWrite(backlightPin, (int)(c*255));
+}
 
 void setup() {       
                                     
@@ -106,7 +114,7 @@ void setup() {
 	stdout = &uartout ;
 
 	// init command line parser
-        Serial.begin(57600);
+        Serial.begin(9600);
 
 
 	// reset the Wiznet chip
@@ -125,17 +133,6 @@ void setup() {
 	wdt_enable(WDTO_8S);                                                
 	// comment out to disable interrupts max 8S = 8 seconds
 
-
-	#ifdef  USE_DISPLAY
-			display.begin(SSD1306_SWITCHCAPVCC);
-			display.display(); // show splashscreen
-			delay(2000);
-			display.clearDisplay();   // clears the screen and buffer
-			  // draw a single pixel
-			display.drawPixel(10, 10, WHITE);
-			display.display();
-			delay(2000);
-	#endif
 			Serial.println();
 	// Set the conversion coefficient from cpm to µSv/h
 
@@ -146,14 +143,27 @@ void setup() {
 			Serial.println("Conversion factor: 344 cpm = 1 uSv/Hr");
 			conversionCoefficient = 0.0029;
 
-	#ifdef  USE_DISPLAY
-							display.setTextSize(1);
-							display.setTextColor(WHITE);
-							display.setCursor(0,0);
-							display.clearDisplay();
-							display.println("Sensor model: LND7318");
-							display.display();
-	#endif
+// set pins
+  pinMode(backlightPin, OUTPUT);
+  //pinMode(buzzerPin, OUTPUT);
+  //pinMode(pinTiltSensor, INPUT);
+  
+// set brightness
+  setBrightness(1.0f);
+  dimmed = 0;
+  //tilt_pre = 0;
+  
+  // set up the LCD's number of columns and rows: 
+  lcd.begin(8, 2);
+
+  // Print a message to the LCD.
+  lcd.clear();
+  lcd.print("nGeigie");
+  //buzz(4000, 2, 50, 150);
+  delay(2000);
+  lcd.setCursor(0, 1);
+  lcd.print(VERSION);
+
 
 
 /**************************************************************************/
@@ -166,6 +176,7 @@ void setup() {
 
 
 	Serial.println("Getting an IP address...");
+	
 
         if (Ethernet.begin(macAddress) == 0)
 
@@ -196,20 +207,11 @@ void setup() {
 	Serial.print("Device ID\t") ;
 	Serial.println(ID) ;
 	Serial.println("setup done.");
-	Serial.println(SEPARATOR);
+	Serial.println(SEPARATOR);	
+	lcd.setCursor(0, 1);
+	lcd.print("setup OK");
 
-#ifdef  USE_DISPLAY
-  display.setCursor(0,10);
- 
-  display.println("Local IP Address:");
-  display.setCursor(0,20);
-  display.println(Ethernet.localIP());
-  display.display();
-  delay(2000);
-  
-#endif
 }
-
 
 //**************************************************************************/
 /*!
@@ -236,20 +238,16 @@ void SendDataToServer(float CPM) {
 
         dtostrf(uSv, 0, 0, csvData);
 
-#ifdef  USE_DISPLAY
-        display.setTextSize(2);
-        display.setTextColor(WHITE);
-        display.setCursor(0,0);
-        display.clearDisplay();
-        display.println(uSv);
-        display.setCursor(20,18);
-        display.println("uSv/Hr");
-        display.display();
-#endif
+	//display geiger info
+	lcd.clear();
+	lcd.setCursor(0, 0);
+    lcd.print(uSv);
+    lcd.print("uS/H");
   
 	if (client.connected())
 	{
 		Serial.println("Disconnecting...");
+		
 		client.stop();
 	}
 
@@ -307,10 +305,24 @@ void SendDataToServer(float CPM) {
 	client.println();
 	client.println(json_buf);
 	Serial.println("Disconnecting...");
+		lcd.setCursor(0, 1);
+        lcd.print("Send  OK");
 	client.stop();
 	Serial.println(SEPARATOR);
 }
-  
+
+void controlBrightness()
+{
+  float dim_coeff;
+  dim_coeff = 0.0;
+  setBrightness(dim_coeff);
+}
+
+/**************************************************************************/
+// Main Loop
+/**************************************************************************/
+
+
 void loop() {                                             
 	// Main Loop
 	// Walk the dog only if we're not in RESET state. if we're in RESET,
@@ -394,3 +406,5 @@ void GetFirmwareVersion()
 {
 	printf_P(PSTR("Firmware_ver:\t%s\n"), VERSION);
 }
+
+
