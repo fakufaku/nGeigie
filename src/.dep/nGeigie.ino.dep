@@ -1,0 +1,133 @@
+nGeigie.o: nGeigie.ino \
+ /Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Arduino.h \
+ /Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/binary.h \
+ /Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/WCharacter.h \
+ /Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/WString.h \
+ /Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/HardwareSerial.h \
+ /Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Stream.h \
+ /Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Print.h \
+ /Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Printable.h \
+ /Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/new.h \
+ /Users/rob/geigie/arduino-1.0.5//hardware/arduino/variants/standard/pins_arduino.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/SPI/SPI.h \
+ /Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Arduino.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/Ethernet/Ethernet.h \
+ /Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/IPAddress.h \
+ /Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Printable.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/Ethernet/EthernetClient.h \
+ /Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Print.h \
+ /Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Client.h \
+ /Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/IPAddress.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/Ethernet/EthernetServer.h \
+ /Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Server.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/Ethernet/Dhcp.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/Ethernet/EthernetUdp.h \
+ /Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Udp.h \
+ /Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Stream.h \
+ board_specific_settings.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/SdFat/SdFat.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/SdFat/SdFile.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/SdFat/SdBaseFile.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/SdFat/SdFatConfig.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/SdFat/SdVolume.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/SdFat/Sd2Card.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/SdFat/SdInfo.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/SdFat/SdSpi.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/SdFat/SdFatStructs.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/SdFat/SdStream.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/SdFat/iostream.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/SdFat/istream.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/SdFat/ios.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/SdFat/ostream.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/SdFat/ArduinoStream.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/SdFat/bufstream.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/SdFat/MinimumSerial.h \
+ /Users/rob/geigie/arduino-1.0.5//libraries/LiquidCrystal/LiquidCrystal.h
+
+/Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Arduino.h:
+
+/Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/binary.h:
+
+/Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/WCharacter.h:
+
+/Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/WString.h:
+
+/Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/HardwareSerial.h:
+
+/Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Stream.h:
+
+/Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Print.h:
+
+/Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Printable.h:
+
+/Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/new.h:
+
+/Users/rob/geigie/arduino-1.0.5//hardware/arduino/variants/standard/pins_arduino.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/SPI/SPI.h:
+
+/Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Arduino.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/Ethernet/Ethernet.h:
+
+/Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/IPAddress.h:
+
+/Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Printable.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/Ethernet/EthernetClient.h:
+
+/Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Print.h:
+
+/Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Client.h:
+
+/Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/IPAddress.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/Ethernet/EthernetServer.h:
+
+/Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Server.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/Ethernet/Dhcp.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/Ethernet/EthernetUdp.h:
+
+/Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Udp.h:
+
+/Users/rob/geigie/arduino-1.0.5//hardware/arduino/cores/arduino/Stream.h:
+
+board_specific_settings.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/SdFat/SdFat.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/SdFat/SdFile.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/SdFat/SdBaseFile.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/SdFat/SdFatConfig.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/SdFat/SdVolume.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/SdFat/Sd2Card.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/SdFat/SdInfo.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/SdFat/SdSpi.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/SdFat/SdFatStructs.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/SdFat/SdStream.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/SdFat/iostream.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/SdFat/istream.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/SdFat/ios.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/SdFat/ostream.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/SdFat/ArduinoStream.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/SdFat/bufstream.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/SdFat/MinimumSerial.h:
+
+/Users/rob/geigie/arduino-1.0.5//libraries/LiquidCrystal/LiquidCrystal.h:

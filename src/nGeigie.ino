@@ -15,116 +15,141 @@ Connection:
  This code is in the public domain.
  */
  
+ 
+
 #include <SPI.h>         // needed for Arduino versions later than 0018
 #include <Ethernet.h>
-#include <util.h>
-#include <avr/eeprom.h>
 #include <limits.h>
 #include <avr/wdt.h>
-#include <Wire.h>
 #include "board_specific_settings.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <SdFat.h>
 #include <LiquidCrystal.h>
-
-#define DIM_TIME 60000
-#define DIM_LEN 1000
-#define NUMFLAKES 10
-#define XPOS 0
-#define YPOS 1
-#define DELTAY 2
-#define SEPARATOR	"--------------------"
-#define DEBUG		0
-
 
 
 static char VERSION[] = "V2.0.0";
-
-#define _SS_MAX_RX_BUFF 128 // RX buffer size
+static char checksum(char *s, int N);
 
 // initialize the library with the numbers of the interface pins
-LiquidCrystal lcd(2,3,8,5,6,7);
+	LiquidCrystal lcd(A0,A1	,8,5,6,7);
 // pin layout
-int backlightPin = 9; 
-//int buzzerPin = 8;  //used instead of pin 4 for LCD pin4 is SD card.
-int pinLightSensor = 0;
-int pinTiltSensor = 15;
-
+	int backlightPin = 9; 
 // screen variables
-float brightness;
-unsigned long dimmerTimer;
-int dimmed;
-int tilt_pre;
+	int brightness;
+	unsigned long dimmerTimer;
+	int dimmed;
+	int tilt_pre;
 
 // this holds the info for the device
 // static device_t dev;
-#define LINE_SZ 100
+	#define LINE_SZ 80
 
 static char json_buf[LINE_SZ];
+static char buf[LINE_SZ];
 
 // Sampling interval (e.g. 60,000ms = 1min)
-unsigned long updateIntervalInMillis = 0;
+	unsigned long updateIntervalInMillis = 0;
 
 // The next time to feed
-unsigned long nextExecuteMillis = 0;
+	unsigned long nextExecuteMillis = 0;
 
 // Event flag signals when a geiger event has occurred
-volatile unsigned char eventFlag = 0;		// FIXME: Can we get rid of eventFlag and use counts>0?
-int counts_per_sample;
+	volatile unsigned char eventFlag = 0;		// FIXME: Can we get rid of eventFlag and use counts>0?
+	int counts_per_sample;
 
 // The last connection time to disconnect from the server
 // after uploaded feeds
-long lastConnectionTime = 0;
+	long lastConnectionTime = 0;
 
 // The conversion coefficient from cpm to µSv/h
-float conversionCoefficient = 0;
+	float conversionCoefficient = 0;
+	//int conversionCoefficient = 0;
 
 void onPulse()
-{
-	counts_per_sample++;
-	eventFlag = 1;
-}
+	{
+		counts_per_sample++;
+		eventFlag = 1;
+	}
 
 unsigned long elapsedTime(unsigned long startTime);
 unsigned long int  nSv ;
 
-
 // holds the control info for the device
-static devctrl_t ctrl;
+	static devctrl_t ctrl;
 
 static FILE uartout = {0};		// needed for printf
 
-void setBrightness(float c)
-{
-  analogWrite(backlightPin, (int)(c*255));
-}
+void setBrightness(int c)
+	{
+	  analogWrite(backlightPin, (int)(c*255));
+	}
 
-void setup() {       
-                                    
+int freeRAM ()
+	{
+		extern int __heap_start, *__brkval;
+		int v;
+		return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
+	}
 
-	pinMode(pinSpkr, OUTPUT);
-	pinMode(pinLED, OUTPUT);
 
-	// fill in the UART file descriptor with pointer to writer.
-//	fdev_setup_stream (&uartout, uart_putchar, NULL, _FDEV_SETUP_WRITE);
+//SD read config file NGEIGIE.CFG
 
+	  SdFat sd;
+	  char *logfile_name= "DATA.CSV";
+	  const uint8_t chipSelect = 4;
+	  ArduinoOutStream cout(Serial);
+	  #define error(s) sd.errorHalt_P(PSTR(s)) 
+			  typedef struct tprofiles
+			{
+			  char *packetBuffer;  
+			}tprofiles;
+			tprofiles temp[3]; 
+		
+	void sdread() {
+		  char line_SD[22];
+		  int n,i=0;
+		  // open test file
+		  SdFile rdfile("NGEIGIE.CFG", O_READ);
+
+	// check for open error
+		  if (!rdfile.isOpen()) error("sdtest");
+
+	// read lines from the file
+		   while ((n = rdfile.fgets(line_SD, sizeof(line_SD))) > 0) {
+		   	if (line_SD[n - 1] == '\n') {
+      		line_SD[n-1] = 0;
+      		}
+		if(i<4)temp[i].packetBuffer = strdup(line_SD);
+		i++;
+  		}
+  		apiKey = temp[0].packetBuffer;
+  		ID = temp[1].packetBuffer;
+  		lat = temp[2].packetBuffer;
+  		lon = temp[3].packetBuffer;  			
+  		sprintf_P(logfile_name, PSTR("%s.log"),ID);
+  	    Serial.print(F("Logfile name:\t"));
+  	    Serial.println(logfile_name);
+  	    
+	}
+	// generate checksum for log format
+		byte len, chk;     
+		char checksum(char *s, int N)
+		{
+		  int i = 0;
+		  char chk = s[0];
+
+		  for (i=1 ; i < N ; i++)
+			chk ^= s[i];
+
+		  return chk;
+		}
+    
+void setup() {  
+	
 	// The uart is the standard output device STDOUT.
 	stdout = &uartout ;
 
 	// init command line parser
         Serial.begin(9600);
-
-
-	// reset the Wiznet chip
-	pinMode(resetPin, OUTPUT);
-	digitalWrite(resetPin, HIGH);
-	delay(20);
-	digitalWrite(resetPin, LOW);
-	delay(20);
-	digitalWrite(resetPin, HIGH);
-
 
 	// init the control info
 	memset(&ctrl, 0, sizeof(devctrl_t));
@@ -133,61 +158,61 @@ void setup() {
 	wdt_enable(WDTO_8S);                                                
 	// comment out to disable interrupts max 8S = 8 seconds
 
-			Serial.println();
+	Serial.println();
 	// Set the conversion coefficient from cpm to µSv/h
+		// LND_7318:
+				//Serial.println(F("Sensor Model: LND 7317"));
+				//Serial.println(F("Conversion factor: 344 cpm = 1 uSv/Hr"));
+				//conversionCoefficient_tube2 = 0.0029;
 
-// LND_7318:
-// Reference:
-
-			Serial.println("Sensor Model: LND 7318");
-			Serial.println("Conversion factor: 344 cpm = 1 uSv/Hr");
-			conversionCoefficient = 0.0029;
-
-// set pins
-  pinMode(backlightPin, OUTPUT);
-  //pinMode(buzzerPin, OUTPUT);
-  //pinMode(pinTiltSensor, INPUT);
+		// LND_712:
+			   conversionCoefficient_tube1 = 0.0083;
+			   Serial.println(F("Sensor model:   LND 712"));
+   
+	// set pins
+	  pinMode(backlightPin, OUTPUT);
   
-// set brightness
-  setBrightness(1.0f);
-  dimmed = 0;
-  //tilt_pre = 0;
+	// set brightness
+	  setBrightness(1);
+	  dimmed = 0;
   
-  // set up the LCD's number of columns and rows: 
-  lcd.begin(8, 2);
+	//set up the LCD's number of columns and rows: 
+		  lcd.begin(8, 2);
 
-  // Print a message to the LCD.
-  lcd.clear();
-  lcd.print("nGeigie");
-  //buzz(4000, 2, 50, 150);
-  delay(2000);
-  lcd.setCursor(0, 1);
-  lcd.print(VERSION);
+	//switch off ethernet
+		  pinMode(10,OUTPUT);
+		  digitalWrite(10,HIGH);
+	//start SD card
+		  if (!sd.begin(chipSelect, SPI_HALF_SPEED)) sd.initErrorHalt(); 
+		  sdread();
+	//switch off SD card
+		  pinMode(4,OUTPUT);
+		  digitalWrite(4,HIGH);
 
+	// Print a message to the LCD.
+		  lcd.clear();
+		  lcd.print(F("nGeigie"));
+		  delay(1000);
+		  lcd.setCursor(0, 1);
+		  lcd.print(VERSION);
+	//Free ram print
+		  Serial.print(F("Free RAM:\t"));
+		  Serial.println(freeRAM());
 
 
 /**************************************************************************/
 // Print out the current device ID
 /**************************************************************************/
-	printf_P(PSTR("Firmware_ver:\t%s\n"), VERSION);
 
- 
 	// Initiate a DHCP session
-
-
-	Serial.println("Getting an IP address...");
-	
-
+	//Serial.println(F("Getting an IP address..."));
         if (Ethernet.begin(macAddress) == 0)
-
 	{
-       		Serial.println("Failed to configure Ethernet using DHCP");
+       		Serial.println(F("Failed DHCP"));
   // DHCP failed, so use a fixed IP address:
- 
         	Ethernet.begin(macAddress, localIP);
 	}
-
-	Serial.print("local_IP:\t");
+	Serial.print(F("local_IP:\t"));
 	Serial.println(Ethernet.localIP());
 
 	// Attach an interrupt to the digital pin and start counting
@@ -195,24 +220,25 @@ void setup() {
 	// Note:
 	// Most Arduino boards have two external interrupts:
 	// numbers 0 (on digital pin 2) and 1 (on digital pin 3)
-	attachInterrupt(0, onPulse, interruptMode);                                // comment out to disable the GM Tube
-//	attachInterrupt(1, onPulse, interruptMode);                                // comment out to disable the GM Tube
-	updateIntervalInMillis = updateIntervalInMinutes * 300000;                  // update time in ms
+			attachInterrupt(0, onPulse, interruptMode);                                // comment out to disable the GM Tube
+  	        attachInterrupt(1, onPulse, interruptMode);                                // comment out to disable the GM Tube
+		updateIntervalInMillis = updateIntervalInMinutes * 300000;                  // update time in ms
 
 	unsigned long now = millis();
 	nextExecuteMillis = now + updateIntervalInMillis;
 
 	// Walk the dog
 	wdt_reset();
-	Serial.print("Device ID\t") ;
+	
+	Serial.print(F("ID:\t\t")) ;
 	Serial.println(ID) ;
-	Serial.println("setup done.");
-	Serial.println(SEPARATOR);	
+	Serial.println(F("setup OK."));	
 	lcd.setCursor(0, 1);
-	lcd.print("setup OK");
-
+	lcd.print(F("setup OK"));
+	
 }
 
+	
 //**************************************************************************/
 /*!
 //  On each falling edge of the Geiger counter's output,
@@ -222,40 +248,32 @@ void setup() {
 /**************************************************************************/
 
 
-
 void SendDataToServer(float CPM) {
 
-	// Convert from cpm to ÂµSv/h with the pre-defined coefficient
+	// Convert from cpm to µSv/h with the pre-defined coefficient
 	float uSv = CPM * conversionCoefficient;                   // convert CPM to Micro Sieverts Per Hour
-        float f_nSv = CPM * conversionCoefficient * 1000;          // convert CPM to Nano Sieverts Per Hour
+	float f_nSv = CPM * conversionCoefficient * 1000;          // convert CPM to Nano Sieverts Per Hour
 
 
-        nSv = (long) (f_nSv+0.5) ;                                 // Convert Floating Point to 32 Bit Integer
-
-
-        char csvData[16];
-        dtostrf(CPM, 0, 0, csvData);
-
-        dtostrf(uSv, 0, 0, csvData);
+    nSv = (long) (f_nSv+0.5) ;                                 // Convert Floating Point to 32 Bit Integer
 
 	//display geiger info
 	lcd.clear();
 	lcd.setCursor(0, 0);
     lcd.print(uSv);
-    lcd.print("uS/H");
+    lcd.print(F("uS/H"));
   
 	if (client.connected())
 	{
-		Serial.println("Disconnecting...");
-		
+		Serial.println(F("Disconnecting"));
 		client.stop();
 	}
 
 	// Try to connect to the server
-	Serial.println("Connecting to safecast.org ...");
+	Serial.println(F("Connecting"));
 	if (client.connect(serverIP, 80))
 	{
-		Serial.println("Connected");
+		Serial.println(F("Connected"));
 		lastConnectionTime = millis();
 
 		// clear the connection fail count if we have at least one successful connection
@@ -268,18 +286,14 @@ void SendDataToServer(float CPM) {
 		{
 				ctrl.state = RESET;
 		}
-		printf("Failed. Retries left: %d.\r\n", MAX_FAILED_CONNS - ctrl.conn_fail_cnt);
 		lastConnectionTime = millis();
 		return;
 	}
 
 	// Convert from cpm to µSv/h with the pre-defined coefficient
-	float DRE = CPM * conversionCoefficient;
         char CPM_string[16];
         dtostrf(CPM, 0, 0, CPM_string);
 
-
-  
     // prepare the log entry
 	memset(json_buf, 0, LINE_SZ);
 	sprintf_P(json_buf, PSTR("{\"longitude\":\"%s\",\"latitude\":\"%s\",\"device_id\":\"%s\",\"value\":\"%s\",\"unit\":\"cpm\"}"),  \
@@ -287,8 +301,6 @@ void SendDataToServer(float CPM) {
 	              lat, \
 	              ID,  \
 	              CPM_string);
-//	              CPM_string.c_str());
-
 
 	int len = strlen(json_buf);
 	json_buf[len] = '\0';
@@ -296,25 +308,60 @@ void SendDataToServer(float CPM) {
 
 	client.print("POST /safecast/index.php?api_key=");
 	client.print(apiKey);
-	client.println(" HTTP/1.1");
-	client.println("User-Agent: Arduino");
-	client.println("Host: 176.56.236.75");
-	client.print("Content-Length: ");
+	client.println(F(" HTTP/1.1"));
+	client.println(F("User-Agent: Arduino"));
+	client.println(F("Host: 176.56.236.75"));
+	client.print(F("Content-Length: "));
 	client.println(strlen(json_buf));
-	client.println("Content-Type: application/json");
+	client.println(F("Content-Type: application/json"));
 	client.println();
 	client.println(json_buf);
-	Serial.println("Disconnecting...");
-		lcd.setCursor(0, 1);
-        lcd.print("Send  OK");
+	Serial.println(F("Disconnecting"));
+	
+	
+	//Create and write SD logfile
+	memset(buf, 0, LINE_SZ);
+	sprintf_P(buf, PSTR("$BNRDD,%s,,,,%s,,,,%s,,%s,,,,,,"),  \
+              ID, \
+              CPM_string, \
+              lat,\
+              lon);
+	              
+	 len = strlen(buf);
+	  buf[len] = '\0';
+
+	  // generate checksum
+	  chk = checksum(buf+1, len);
+
+	  // add checksum to end of line before sending
+	  if (chk < 16)
+		sprintf_P(buf + len, PSTR("*0%X"), (int)chk);
+	  else
+		sprintf_P(buf + len, PSTR("*%X"), (int)chk);
+
+	//Serial.println(buf);
+	SdFile wrfile;
+	  if (!wrfile.open(logfile_name, O_RDWR | O_CREAT | O_AT_END)) {
+    sd.errorHalt("opening file for write failed");
+	  }
+
+    wrfile.println(buf);
+    //Serial.print(logfile_name);
+    Serial.println(F("SDcard data written"));
+    // close the file:
+    wrfile.close();
+    
+    
+    // report to LCD 
+	lcd.setCursor(0, 1);
+	lcd.print(F("Send OK"));
 	client.stop();
-	Serial.println(SEPARATOR);
 }
 
-void controlBrightness()
+int controlBrightness()
 {
-  float dim_coeff;
-  dim_coeff = 0.0;
+  int dim_coeff;
+  dim_coeff = 0;
   setBrightness(dim_coeff);
 }
 
@@ -337,37 +384,7 @@ void loop() {
 	// maintain the DHCP lease, if needed
 	Ethernet.maintain();
 
-	if (DEBUG)
-	{
-		// Echo received strings to a host PC
-		if (client.available())
-		{
-			char c = client.read();
-			Serial.print(c);
-		}
-
-		if (client.connected() && (elapsedTime(lastConnectionTime) > 10000))
-		{
-			Serial.println();
-			Serial.println("Disconnecting...");
-			client.stop();
-		}
-	}
-
 	// Add any geiger event handling code here
-	if (eventFlag)
-	{
-		eventFlag = 0;				// clear the event flag for later use
-//              Serial.print(".");                     // prints a dot accross the console for each click
-//		tone(pinSpkr, 2000);			// beep the piezo speaker
-
-		digitalWrite(pinLED, HIGH);		// flash the LED
-		delay(7);
-		digitalWrite(pinLED, LOW);
-
-//		noTone(pinSpkr);			// turn off the speaker
-
-	}
 
 	// check if its time to update server.
 	// elapsedTime function will take into account counter rollover.
@@ -377,6 +394,7 @@ void loop() {
 	}
 
 	float CPM = (float)counts_per_sample / (float)updateIntervalInMinutes/5;
+	//int CPM = (int)counts_per_sample / (float)updateIntervalInMinutes/5;
 	counts_per_sample = 0;
 
         SendDataToServer(CPM);
@@ -408,3 +426,4 @@ void GetFirmwareVersion()
 }
 
 
+ 
