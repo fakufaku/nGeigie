@@ -26,7 +26,7 @@ Connection:
 #include <LiquidCrystal.h>
 
 
-static char VERSION[] = "V2.1.2";
+static char VERSION[] = "V2.0.0";
 static char checksum(char *s, int N);
 
 // initialize the library with the numbers of the interface pins
@@ -166,7 +166,7 @@ void setup() {
 				//conversionCoefficient_tube2 = 0.0029;
 
 		// LND_712:
-			   conversionCoefficient = 0.0083;
+			   conversionCoefficient_tube1 = 0.0083;
 			   Serial.println(F("Sensor model:   LND 712"));
    
 	// set pins
@@ -221,7 +221,7 @@ void setup() {
 	// Most Arduino boards have two external interrupts:
 	// numbers 0 (on digital pin 2) and 1 (on digital pin 3)
 			attachInterrupt(0, onPulse, interruptMode);                                // comment out to disable the GM Tube
-  	        //attachInterrupt(1, onPulse, interruptMode);                                // comment out to disable the GM Tube
+  	        attachInterrupt(1, onPulse, interruptMode);                                // comment out to disable the GM Tube
 		updateIntervalInMillis = updateIntervalInMinutes * 300000;                  // update time in ms
 
 	unsigned long now = millis();

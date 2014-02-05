@@ -1,0 +1,5 @@
+Line with CRLF
+Line with only LF
+Long line that will require an extra read
+
+Line at EOF without NL
