@@ -26,13 +26,12 @@ Connection:
 #include <LiquidCrystal.h>
 
 
-static char VERSION[] = "V2.1.2";
+static char VERSION[] = "V2.1.3";
 static char checksum(char *s, int N);
 
 // initialize the library with the numbers of the interface pins
 	LiquidCrystal lcd(A0,A1,8,5,6,7);
-// pin layout
-	int backlightPin = 9; 
+
 // screen variables
 	int brightness;
 	unsigned long dimmerTimer;
@@ -62,8 +61,7 @@ static char buf[LINE_SZ];
 
 // The conversion coefficient from cpm to µSv/h
 	float conversionCoefficient = 0;
-	//int conversionCoefficient = 0;
-
+	
 void onPulse()
 	{
 		counts_per_sample++;
@@ -78,10 +76,7 @@ unsigned long int  nSv ;
 
 static FILE uartout = {0};		// needed for printf
 
-void setBrightness(int c)
-	{
-	  analogWrite(backlightPin, (int)(c*255));
-	}
+
 
 int freeRAM ()
 	{
@@ -161,19 +156,17 @@ void setup() {
 	Serial.println();
 	// Set the conversion coefficient from cpm to µSv/h
 		// LND_7318:
-				//Serial.println(F("Sensor Model: LND 7317"));
-				//Serial.println(F("Conversion factor: 344 cpm = 1 uSv/Hr"));
-				//conversionCoefficient_tube2 = 0.0029;
+				Serial.println(F("Sensor Model: LND 7317"));
+				Serial.println(F("Conversion factor: 344 cpm = 1 uSv/Hr"));
+				conversionCoefficient = 0.0029;
 
 		// LND_712:
-			   conversionCoefficient = 0.0083;
-			   Serial.println(F("Sensor model:   LND 712"));
+			   //conversionCoefficient = 0.0083;
+			   //Serial.println(F("Sensor model:   LND 712"));
    
-	// set pins
-	  pinMode(backlightPin, OUTPUT);
+
   
 	// set brightness
-	  setBrightness(1);
 	  dimmed = 0;
   
 	//set up the LCD's number of columns and rows: 
@@ -362,7 +355,6 @@ int controlBrightness()
 {
   int dim_coeff;
   dim_coeff = 0;
-  setBrightness(dim_coeff);
 }
 
 /**************************************************************************/
