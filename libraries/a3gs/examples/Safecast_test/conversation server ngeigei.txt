@@ -1,0 +1,23 @@
+Rob-Macbook-2:src rob$ curl "http://176.56.236.75/safecast/index.php?api_key=pcaztEazJwDTzzGK9Nsv" -v -X POST -H 'Accept: application/json' -H "Content-Type: application/json" -d '{"longitude":"139.695506","latitude":"35.656065","value":"41","unit":"cpm"}'
+* About to connect() to 176.56.236.75 port 80 (#0)
+*   Trying 176.56.236.75... connected
+* Connected to 176.56.236.75 (176.56.236.75) port 80 (#0)
+> POST /safecast/index.php?api_key=pcaztEazJwDTzzGK9Nsv HTTP/1.1
+> User-Agent: curl/7.21.4 (universal-apple-darwin11.0) libcurl/7.21.4 OpenSSL/0.9.8y zlib/1.2.5
+> Host: 176.56.236.75
+> Accept: application/json
+> Content-Type: application/json
+> Content-Length: 75
+> 
+< HTTP/1.1 200 OK
+< Date: Fri, 24 Jan 2014 12:00:59 GMT
+< Server: Apache/2.2.22 (Debian)
+< X-Powered-By: PHP/5.4.4-14+deb7u5
+< Vary: Accept-Encoding
+< Content-Length: 197
+< Content-Type: text/html
+< 
+{"captured_at":"2014-01-24T12:00:59Z","device_id":null,"id":28754543,"location_name":null,"original_id":28754543,"unit":"cpm","user_id":11,"value":41.0,"latitude":35.656065,"longitude":139.695506}
+* Connection #0 to host 176.56.236.75 left intact
+* Closing connection #0
+Rob-Macbook-2:src rob$ 
