@@ -10,6 +10,7 @@ Connection:
  created 18 Nov 2013
  updated 22 Nov 2013
  updated 10 Dec 2013 added LCD display
+ updated april 8 for new gateway
  by Allan Lind: alind@joho.com
  Code from Lionel and Kalin of Safecast
  This code is in the public domain.
