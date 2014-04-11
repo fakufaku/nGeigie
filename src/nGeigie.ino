@@ -27,7 +27,7 @@ Connection:
 #include <LiquidCrystal.h>
 
 
-static char VERSION[] = "V2.1.3";
+static char VERSION[] = "V2.1.5";
 static char checksum(char *s, int N);
 
 // initialize the library with the numbers of the interface pins
@@ -300,11 +300,11 @@ void SendDataToServer(float CPM) {
 	json_buf[len] = '\0';
 	Serial.println(json_buf);
 
-	client.print("POST /safecast/index.php?api_key=");
+	client.print("POST /scripts/index.php?api_key=");
 	client.print(apiKey);
 	client.println(F(" HTTP/1.1"));
 	client.println(F("User-Agent: Arduino"));
-	client.println(F("Host: 176.56.236.75"));
+	client.println(F("Host: 107.161.164.166"));
 	client.print(F("Content-Length: "));
 	client.println(strlen(json_buf));
 	client.println(F("Content-Type: application/json"));
