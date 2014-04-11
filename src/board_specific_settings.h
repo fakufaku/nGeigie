@@ -2,14 +2,14 @@
 // Before uploading to your Arduino Ethernet board,
 // please replace with your own settings
 
-#define MAX_FAILED_CONNS 1
+#define MAX_FAILED_CONNS 3
 
 
 // Your API key (a public secure key is recommended) IWAKI HAWK 002
 const char *apiKey = "q1LKu7RQ8s5pmyxunnDW";
 const char *lat = "35.6617" ;
 const char *lon = "139.7447" ;
-const char *ID = "50" ;
+const char *ID = "99" ;
 
 // REPLACE WITH A PROPER MAC ADDRESS
 byte macAddress[] = { 0x90, 0xA2, 0xDA, 0x0E, 0xE0, 0x5C };
@@ -18,7 +18,7 @@ byte macAddress[] = { 0x90, 0xA2, 0xDA, 0x0E, 0xE0, 0x5C };
 // The IP address will be dependent on your local network:
 EthernetClient client;
 IPAddress localIP (192, 168, 100, 40);		// fallback local IP address if no DHCP
-IPAddress serverIP(176, 56, 236, 75 );		// Lionel's proxy server with timestamp
+IPAddress serverIP(107, 161, 164, 166 );		// Lionel's proxy server with timestamp
 
 
 // This is specific to the Uno Ethernet board
