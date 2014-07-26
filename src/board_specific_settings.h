@@ -6,10 +6,10 @@
 
 
 // Your API key (a public secure key is recommended) IWAKI HAWK 002
-const char *apiKey = "buXEwRaCpBMer8jTZ9mp";
-const char *lat = "37.0105" ;
-const char *lon = "140.9253" ;
-const char *ID = "41" ;
+const char *apiKey = "<your_api_key>" ;
+const char *lat = "<your_latitude>" ;
+const char *lon = "<your_longitude>" ;
+const char *ID = "<your_device_number>" ;
 
 // REPLACE WITH A PROPER MAC ADDRESS
 byte macAddress[] = { 0xDA, 0xD1, 0xBE, 0x60, 0x0D, 0x00 };
@@ -18,19 +18,20 @@ byte macAddress[] = { 0xDA, 0xD1, 0xBE, 0x60, 0x0D, 0x00 };
 // Enter an IP address for your controller below.
 // The IP address will be dependent on your local network:
 EthernetClient client;
-IPAddress localIP (192, 168, 100, 40);		// fallback local IP address if no DHCP
-IPAddress serverIP(176, 56, 236, 75 );
+IPAddress localIP (10, 0, 0, 5);		// fallback local IP address if no DHCP
+//IPAddress serverIP(176, 56, 236, 75 );  // Lionel's temporary gateway
+IPAddress serverIP(107, 161, 164, 166);   // Official gateway
 
 
 // This is specific to the Uno Ethernet board
-int pinSpkr = 1;	// pin number of piezo speaker
-int pinLED = 0;		// pin number of event LED
+int pinSpkr = 6;	// pin number of piezo speaker
+int pinLED = 7;		// pin number of event LED
 int resetPin = A1;
 //int radioSelect = A3;
 
 
 // Update interval in minutes
-const int updateIntervalInMinutes = 1;
+const int updateIntervalInMinutes = 5;
 
 typedef struct
 {
@@ -47,8 +48,6 @@ typedef struct
     unsigned char conn_fail_cnt;
 } devctrl_t;
 
-
-
 enum states
 {
     NORMAL = 0,
@@ -62,6 +61,4 @@ enum states
 // * For most geiger counter modules: FALLING
 // * Geiger Counter Twig by Seeed Studio: RISING
 const int interruptMode = RISING;
-
-// vim: set tabstop=4 shiftwidth=4 syntax=c foldmethod=marker :
 

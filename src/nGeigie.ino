@@ -14,7 +14,10 @@ Connection:
  This code is in the public domain.
  */
  
-#define USE_DISPLAY 1     // comment this line out if not using the display
+//#define USE_DISPLAY 1         // comment all three lines out if not using the display
+//#include <Adafruit_GFX.h>     // this too
+//#include <Adafruit_SSD1306.h> // and this too
+
 
 #include <SPI.h>         // needed for Arduino versions later than 0018
 #include <Ethernet.h>
@@ -25,8 +28,7 @@ Connection:
 #include <Wire.h>
 #include "board_specific_settings.h"
 
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+#ifdef  USE_DISPLAY
 #define OLED_CS 4
 #define OLED_MOSI 5
 #define OLED_CLK 6
@@ -38,9 +40,9 @@ Connection:
 #define DELTAY 2
 #define LOGO16_GLCD_HEIGHT 16 
 #define LOGO16_GLCD_WIDTH  16 
+#endif
 #define SEPARATOR	"--------------------"
 #define DEBUG		0
-
 
 
 static char VERSION[] = "1.2.0";
@@ -136,22 +138,27 @@ void setup() {
 			display.display();
 			delay(2000);
 	#endif
+
 			Serial.println();
-	// Set the conversion coefficient from cpm to µSv/h
+      // Set the conversion coefficient from cpm to µSv/h
 
-// LND_7318:
-// Reference:
-
-			Serial.println("Sensor Model: LND 7318");
-			Serial.println("Conversion factor: 344 cpm = 1 uSv/Hr");
-			conversionCoefficient = 0.0029;
+      // LND_712:
+      // Reference:
+      // http://www.lndinc.com/products/711/
+      // For Co60
+      // 18CPS/mrem/hour = 108 CPM/uSv/hour
+      // 1 CPM = 0.009259259 uSv/hour
+      // Pieter's adjustement: 0.0083
+      conversionCoefficient = 0.0083;
+			Serial.println("Sensor Model: LND 712");
+			Serial.println("Conversion factor: 120 cpm = 1 uSv/Hr");
 
 	#ifdef  USE_DISPLAY
 							display.setTextSize(1);
 							display.setTextColor(WHITE);
 							display.setCursor(0,0);
 							display.clearDisplay();
-							display.println("Sensor model: LND7318");
+							display.println("Sensor model: LND712");
 							display.display();
 	#endif
 
@@ -184,9 +191,9 @@ void setup() {
 	// Note:
 	// Most Arduino boards have two external interrupts:
 	// numbers 0 (on digital pin 2) and 1 (on digital pin 3)
-	attachInterrupt(0, onPulse, interruptMode);                                // comment out to disable the GM Tube
-//	attachInterrupt(1, onPulse, interruptMode);                                // comment out to disable the GM Tube
-	updateIntervalInMillis = updateIntervalInMinutes * 300000;                  // update time in ms
+	//attachInterrupt(0, onPulse, interruptMode);                                // comment out to disable the GM Tube
+  attachInterrupt(1, onPulse, interruptMode);                                // comment out to disable the GM Tube
+	updateIntervalInMillis = updateIntervalInMinutes * 60000;                  // update time in ms
 
 	unsigned long now = millis();
 	nextExecuteMillis = now + updateIntervalInMillis;
@@ -347,13 +354,13 @@ void loop() {
 	{
 		eventFlag = 0;				// clear the event flag for later use
 //              Serial.print(".");                     // prints a dot accross the console for each click
-//		tone(pinSpkr, 2000);			// beep the piezo speaker
+    tone(pinSpkr, 2000);			// beep the piezo speaker
 
 		digitalWrite(pinLED, HIGH);		// flash the LED
 		delay(7);
 		digitalWrite(pinLED, LOW);
 
-//		noTone(pinSpkr);			// turn off the speaker
+    noTone(pinSpkr);			// turn off the speaker
 
 	}
 
@@ -364,7 +371,7 @@ void loop() {
 		return;
 	}
 
-	float CPM = (float)counts_per_sample / (float)updateIntervalInMinutes/5;
+	float CPM = (float)counts_per_sample / (float)updateIntervalInMinutes;
 	counts_per_sample = 0;
 
         SendDataToServer(CPM);
