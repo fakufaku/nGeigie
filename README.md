@@ -1,6 +1,8 @@
 A repositroy to host firmware/software related to the DIY Geiger-Mueller
 counter units.
 
+**This version of the code is set to run on old school Freakduino+NetRAD+LND712 hardware.**
+
 http://www.tokyohackerspace.org/en/event/diy-geiger-mueller-counter-workshop-20-2011-08-08
 http://www.tokyohackerspace.org/en/event/diy-geiger-mueller-counter-workshop-20-2011-08-22
 
