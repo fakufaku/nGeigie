@@ -303,16 +303,16 @@ void SendDataToServer(float CPM) {
 	json_buf[len] = '\0';
 	Serial.println(json_buf);
 
-	client.print("POST /safecast/index.php?api_key=");
-	client.print(apiKey);
-	client.println(" HTTP/1.1");
-	client.println("User-Agent: Arduino");
-	client.println("Host: 176.56.236.75");
-	client.print("Content-Length: ");
-	client.println(strlen(json_buf));
-	client.println("Content-Type: application/json");
-	client.println();
-	client.println(json_buf);
+  client.print("POST /scripts/index.php?api_key=");
+  client.print(apiKey);
+  client.println(F(" HTTP/1.1"));
+  client.println(F("Accept: application/json"));
+  client.println(F("Host: 107.161.164.166"));
+  client.print(F("Content-Length: "));
+  client.println(strlen(json_buf));
+  client.println(F("Content-Type: application/json"));
+  client.println();
+  client.println(json_buf);
 	Serial.println("Disconnecting...");
 	client.stop();
 	Serial.println(SEPARATOR);
